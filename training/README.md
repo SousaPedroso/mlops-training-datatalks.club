@@ -2,11 +2,4 @@ This README provides important informations about the setup and structure for mo
 
 ## Project setup
 
-The project was managed with anaconda, python3.10 and pipenv. Consider the followings commands to start using this project.
-
-```bash
-conda create -n mlops-training python=3.10 pipenv
-conda activate mlops-training
-pipenv install .
-pipenv shell
-```
+The project was managed with anaconda, python3.10 and pipenv. Consider the script [setup.sh](/training/setup.sh) to start using this project.
