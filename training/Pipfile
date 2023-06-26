@@ -6,8 +6,14 @@ name = "pypi"
 [packages]
 datasets = "*"
 notebook = "*"
+seaborn = "*"
+nltk = "*"
+scikit-learn = "*"
+gensim = "*"
 
 [dev-packages]
+pylint = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.10"
