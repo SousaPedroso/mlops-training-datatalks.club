@@ -1,0 +1,42 @@
+version: '3.7'
+
+volumes:
+  tracking_server_data:
+  artifacts_data:
+
+networks:
+  backend:
+  frontend:
+
+services:
+  tracking-server-db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+    volumes:
+      - tracking_server_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    ports:
+      - 5432:5432
+    restart: always
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    build:
+      context: ./monitoring/mlflow
+      dockerfile: Dockerfile
+    volumes:
+      - artifacts_data:/var/lib/mlflow/data
+    networks:
+      - backend
+      - frontend
+    ports:
+      - 5000:5000
+    depends_on:
+      - tracking-server-db
+    restart: always
+    command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tracking-server-db:5432/${POSTGRES_DB} --default-artifact-root /var/lib/mlflow/data/mflow/ --host 0.0.0.0
