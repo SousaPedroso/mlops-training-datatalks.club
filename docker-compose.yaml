@@ -25,7 +25,7 @@ services:
     restart: always
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:latest
+    image: mlflow_tracking_server
     build:
       context: ./monitoring/mlflow
       dockerfile: Dockerfile
