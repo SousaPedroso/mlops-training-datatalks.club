@@ -1,6 +1,6 @@
 # MLOps for B2W dataset
 
-Repository for training MLOps for 2023 cohort from [DataTalks.club](https://github.com/DataTalksClub/mlops-zoomcamp). An end-to-end ML pipeline for
+Repository for training MLOps for 2023 cohort from [DataTalks.club](https://github.com/DataTalksClub/mlops-zoomcamp). An end-to-end ML pipeline for NLP processing at [B2W dataset](https://huggingface.co/datasets/ruanchaves/b2w-reviews01).
 
 Table of sections:
 - [Motivation](#motivation)
@@ -33,7 +33,7 @@ Before execute this project, be sure to attend the requisites:
 curl -fsSL https://get.docker.com | bash
 ```
 
-- Python. You can install through anaconda, venv or directly build from source.
+- Python 3.10. You can install through anaconda, venv or directly build from source.
 
 
 ## Execution
