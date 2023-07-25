@@ -10,10 +10,15 @@ seaborn = "*"
 nltk = "*"
 scikit-learn = "*"
 gensim = "*"
+mlflow = "==2.4.1"
+prefect = "==2.10.20"
 
 [dev-packages]
 pylint = "*"
 pytest = "*"
+black = "*"
+isort = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.10"

@@ -1,8 +1,9 @@
 version: '3.7'
 
 volumes:
-  tracking_server_data:
-  artifacts_data:
+  postgres:
+  mlflow:
+  prefect:
 
 networks:
   backend:
@@ -17,7 +18,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - tracking_server_data:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     networks:
       - backend
     ports:
@@ -30,7 +31,7 @@ services:
       context: ./monitoring/mlflow
       dockerfile: Dockerfile
     volumes:
-      - artifacts_data:/var/lib/mlflow/data
+      - mlflow:/var/lib/mlflow/data
     networks:
       - backend
       - frontend
@@ -40,3 +41,19 @@ services:
       - tracking-server-db
     restart: always
     command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tracking-server-db:5432/${POSTGRES_DB} --default-artifact-root /var/lib/mlflow/data/mflow/ --host 0.0.0.0
+
+  prefect:
+    image: prefecthq/prefect:2-python3.10
+    volumes:
+      - prefect:/root/.prefect
+    environment:
+      - PREFECT_ORION_API_HOST=0.0.0.0
+      - PREFECT_PROFILE="default"
+      - PREFECT_API_URL="http://127.0.0.1:4200/api"
+    networks:
+      - backend
+      - frontend
+    ports:
+      - 4200:4200
+    restart: always
+    entrypoint: ["prefect", "server", "start"]
