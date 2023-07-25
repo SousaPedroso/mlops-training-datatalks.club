@@ -1,6 +1,7 @@
 
-# training module
+# training module and extra files
 /training/.ipynb_checkpoints
+*.pyc
 
 # environment and secrets
 *.env
