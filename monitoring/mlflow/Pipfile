@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 mlflow =  "*"
 psycopg2-binary = "*"
+certifi = "*"
 
 [dev-packages]
 
