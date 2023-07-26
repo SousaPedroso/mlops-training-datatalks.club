@@ -7,7 +7,6 @@ import pickle
 from argparse import ArgumentParser
 
 import mlflow
-import numpy as np
 from gensim.models import CoherenceModel, LdaModel
 from prefect import flow, task
 from prefect.task_runners import SequentialTaskRunner
@@ -59,9 +58,6 @@ def hyperparameter_opt(
     alpha: list,
     beta: list,
 ):
-    X_train = np.array(X_train)
-    X_val = np.array(X_val)
-
     with mlflow.start_run():
         mlflow.set_tag("model", "LDA")
         mlflow.set_tag("scope", "Topic-Modeling")
