@@ -12,6 +12,7 @@ scikit-learn = "*"
 gensim = "*"
 mlflow = "==2.4.1"
 prefect = "==2.10.20"
+aiohttp = ">=3.8.5"
 
 [dev-packages]
 pylint = "*"
