@@ -40,7 +40,7 @@ services:
     depends_on:
       - tracking-server-db
     restart: always
-    command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tracking-server-db:5432/${POSTGRES_DB} --default-artifact-root /var/lib/mlflow/data/mflow/ --host 0.0.0.0
+    command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tracking-server-db:5432/${POSTGRES_DB} --default-artifact-root file:///var/lib/mlflow/data --host 0.0.0.0
 
   prefect:
     image: prefect_server

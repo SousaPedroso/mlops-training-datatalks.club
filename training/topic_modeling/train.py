@@ -7,7 +7,6 @@ import pickle
 from argparse import ArgumentParser
 
 import mlflow
-import pandas as pd
 from gensim.models import CoherenceModel, LdaModel
 from prefect import flow, task
 from prefect.task_runners import SequentialTaskRunner
@@ -64,23 +63,20 @@ def hyperparameter_opt(
         mlflow.set_tag("scope", "Topic-Modeling")
         mlflow.log_param("passes", passes)
 
-        params = {"k": [], "a": [], "b": [], "passes": []}
         for k in topics:
             for a in alpha:
                 for b in beta:
-                    params["k"].append(k)
-                    params["a"].append(a)
-                    params["b"].append(b)
-                    params["passes"].append(passes)
+                    params = {}
+                    params["k"] = k
+                    params["a"] = a
+                    params["b"] = b
 
                     coherence_score = compute_coherence_values(
                         X_train, X_val, passes, id2word, k, a, b
                     )
 
                     mlflow.log_metric("coherence", coherence_score)
-
-        df = pd.DataFrame(params)
-        mlflow.log_artifact(df.to_csv(), "params.csv")
+                    mlflow.log_metrics(params)
 
 
 # pylint: disable=line-too-long
