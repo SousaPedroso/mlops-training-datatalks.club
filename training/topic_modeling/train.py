@@ -7,6 +7,7 @@ import pickle
 from argparse import ArgumentParser
 
 import mlflow
+import pandas as pd
 from gensim.models import CoherenceModel, LdaModel
 from prefect import flow, task
 from prefect.task_runners import SequentialTaskRunner
@@ -14,10 +15,10 @@ from prefect.task_runners import SequentialTaskRunner
 
 @task
 def load_dataset(input_dir: str) -> tuple[list, list]:
-    with open(os.path.join(input_dir, "train.pkl"), "rb") as f_in:
+    with open(os.path.join(input_dir, "train_corpus.pkl"), "rb") as f_in:
         train_dataset = pickle.load(f_in)
 
-    with open(os.path.join(input_dir, "valid.pkl"), "rb") as f_in:
+    with open(os.path.join(input_dir, "valid_tokens.pkl"), "rb") as f_in:
         val_daset = pickle.load(f_in)
 
     return train_dataset, val_daset
@@ -61,18 +62,25 @@ def hyperparameter_opt(
     with mlflow.start_run():
         mlflow.set_tag("model", "LDA")
         mlflow.set_tag("scope", "Topic-Modeling")
+        mlflow.log_param("passes", passes)
 
-        for i in range(len(X_val)):
-            for k in topics:
-                for a in alpha:
-                    for b in beta:
-                        params = {"k": k, "a": a, "b": b, "passes": i}
-                        coherence_score = compute_coherence_values(
-                            X_train, X_val, passes, id2word, k, a, b
-                        )
+        params = {"k": [], "a": [], "b": [], "passes": []}
+        for k in topics:
+            for a in alpha:
+                for b in beta:
+                    params["k"].append(k)
+                    params["a"].append(a)
+                    params["b"].append(b)
+                    params["passes"].append(passes)
 
-                        mlflow.log_metric("coherence", coherence_score)
-                        mlflow.set_tags(params)
+                    coherence_score = compute_coherence_values(
+                        X_train, X_val, passes, id2word, k, a, b
+                    )
+
+                    mlflow.log_metric("coherence", coherence_score)
+
+        df = pd.DataFrame(params)
+        mlflow.log_artifact(df.to_csv(), "params.csv")
 
 
 # pylint: disable=line-too-long

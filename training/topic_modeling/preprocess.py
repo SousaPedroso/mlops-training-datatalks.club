@@ -24,30 +24,48 @@ def load_data(data_repo: str) -> Dataset:
 
 
 @task
-def prepare_features(dataset: Dataset) -> tuple[list, list]:
-    tokens = dataset.map(tokenize)["tokens_list"]
+def prepare_features(dataset: Dataset) -> tuple[list, list, list]:
+    aux_list = ["foo" for _ in range(len(dataset))]
+    dataset = dataset.add_column(name="tokens_list", column=aux_list)
+    dataset = dataset.map(tokenize)
+    tokens = [tokens.split() for tokens in dataset["tokens_list"]]
     id2word = corpora.Dictionary(tokens)
     corpus = [id2word.doc2bow(token) for token in tokens]
 
-    return id2word, corpus
+    return id2word, corpus, tokens
 
 
 # 70-20-10 split
 @task
-def split_dataset(corpus: list, num_index_dictionary: list, output_dir: str):
+def split_dataset(corpus: list, tokens: list, num_index_dictionary: list, output_dir: str):
     # Data will not be shuffled to recover informations from reviews
-    train_data, validation_data = train_test_split(corpus, test_size=0.20, shuffle=False)
+    train_data_corpus, validation_data_corpus, *splitted_tokens = train_test_split(
+        corpus, tokens, test_size=0.20, shuffle=False
+    )
 
-    train_data, test_data = train_test_split(train_data, test_size=0.125, shuffle=False)
+    train_data_tokens, validation_data_tokens = splitted_tokens[0], splitted_tokens[1]
+    train_data_corpus, test_data_corpus, *splitted_tokens = train_test_split(
+        train_data_corpus, train_data_tokens, test_size=0.125, shuffle=False
+    )
+    train_data_tokens, test_data_tokens = splitted_tokens[0], splitted_tokens[1]
 
-    with open(os.path.join(output_dir, "train.pkl"), "wb") as f_out:
-        pickle.dump(train_data, f_out)
+    with open(os.path.join(output_dir, "train_corpus.pkl"), "wb") as f_out:
+        pickle.dump(train_data_corpus, f_out)
 
-    with open(os.path.join(output_dir, "valid.pkl"), "wb") as f_out:
-        pickle.dump(validation_data, f_out)
+    with open(os.path.join(output_dir, "valid_corpus.pkl"), "wb") as f_out:
+        pickle.dump(validation_data_corpus, f_out)
 
-    with open(os.path.join(output_dir, "test.pkl"), "wb") as f_out:
-        pickle.dump(test_data, f_out)
+    with open(os.path.join(output_dir, "train_tokens.pkl"), "wb") as f_out:
+        pickle.dump(train_data_tokens, f_out)
+
+    with open(os.path.join(output_dir, "valid_tokens.pkl"), "wb") as f_out:
+        pickle.dump(validation_data_tokens, f_out)
+
+    with open(os.path.join(output_dir, "test_corpus.pkl"), "wb") as f_out:
+        pickle.dump(test_data_corpus, f_out)
+
+    with open(os.path.join(output_dir, "test_tokens.pkl"), "wb") as f_out:
+        pickle.dump(test_data_tokens, f_out)
 
     with open(os.path.join(output_dir, "id2word.pkl"), "wb") as f_out:
         pickle.dump(num_index_dictionary, f_out)
@@ -59,8 +77,8 @@ def split_dataset(corpus: list, num_index_dictionary: list, output_dir: str):
 )
 def prepare_data(input_dir: str, output_dir: str):
     dataset = load_data(input_dir)
-    id2w, corpus = prepare_features(dataset)
-    split_dataset(corpus, id2w, output_dir)
+    id2w, corpus, tokens = prepare_features(dataset)
+    split_dataset(corpus, tokens, id2w, output_dir)
 
 
 # pylint: disable=duplicate-code

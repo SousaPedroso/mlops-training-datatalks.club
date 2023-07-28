@@ -12,7 +12,7 @@ from training.preprocessing import tokenize
 def test_tokenize_empty_text():
     ds_dict = {"review_text": [""]}
     ds = Dataset.from_dict(ds_dict)
-    expected_output_dict = {"review_text": [""], "tokens_list": [""]}
+    expected_output_dict = {"review_text": [""], "tokens_list": [" "]}
     expected_output = Dataset.from_dict(expected_output_dict)
     cur_result = ds.map(tokenize)
     assert cur_result.data.equals(expected_output.data)
@@ -22,7 +22,7 @@ def test_tokenize_empty_text():
     # pylint: disable=line-too-long
     expected_output_dict = {
         "review_text": [" \n a b c d e f g h i j k l m n o p q r s t u v w x y z"],
-        "tokens_list": [""],
+        "tokens_list": [" "],
     }
     expected_output = Dataset.from_dict(expected_output_dict)
     cur_result = ds.map(tokenize)
@@ -35,7 +35,7 @@ def test_tokenize_stopwords_and_punctuation():
     ds = Dataset.from_dict(ds_dict)
     expected_output_dict = {
         "review_text": ["Este é um teste de pré-processamento de texto."],
-        "tokens_list": [["test", "pré", "process", "text"]],
+        "tokens_list": ["test pré process text"],
     }
     expected_output = Dataset.from_dict(expected_output_dict)
     cur_result = ds.map(tokenize)
@@ -55,8 +55,8 @@ def test_tokenize_stopwords_and_punctuation():
             "Este é, + um teste de pré-processamento de texto.!!! Ok?",
         ],
         "tokens_list": [
-            ["test", "pré", "process", "text"],
-            ["test", "pré", "process", "text", "ok"],
+            "test pré process text",
+            "test pré process text ok",
         ],
     }
     expected_output = Dataset.from_dict(expected_output_dict)
@@ -71,7 +71,7 @@ def test_tokenize_numbers():
     ds = Dataset.from_dict(ds_dict)
     expected_output_dict = {
         "review_text": ["Este é um teste com números: 123."],
-        "tokens_list": [["test", "númer"]],
+        "tokens_list": ["test númer"],
     }
     expected_output = Dataset.from_dict(expected_output_dict)
     cur_result = ds.map(tokenize)
@@ -91,8 +91,8 @@ def test_tokenize_numbers():
             "O at3ndim3nto para nós 4 foi de primeira, pode ter ctz 6vão crescer mais",
         ],
         "tokens_list": [
-            ["vcs", "esta1", "parabens", "at3ndiment", "otim"],
-            ["at3ndim3nt", "primeir", "pod", "ter", "ctz", "6vã", "cresc"],
+            "vcs esta1 parabens at3ndiment otim",
+            "at3ndim3nt primeir pod ter ctz 6vã cresc",
         ],
     }
     expected_output = Dataset.from_dict(expected_output_dict)

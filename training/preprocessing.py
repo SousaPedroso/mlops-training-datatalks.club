@@ -27,10 +27,10 @@ def tokenize(dataset):
             if word not in stop_words and word not in string.punctuation and len(word) > 1
         ]
 
-        tokens = [word for word in tokens if not word.isdigit()]
+        tokens = " ".join([word for word in tokens if not word.isdigit()])
 
     if not tokens:
-        tokens = ""
+        tokens = " "
 
     dataset["tokens_list"] = tokens
     return dataset
