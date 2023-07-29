@@ -18,9 +18,9 @@ def load_dataset(input_dir: str) -> tuple[list, list]:
         train_dataset = pickle.load(f_in)
 
     with open(os.path.join(input_dir, "valid_tokens.pkl"), "rb") as f_in:
-        val_daset = pickle.load(f_in)
+        val_dataset = pickle.load(f_in)
 
-    return train_dataset, val_daset
+    return train_dataset, val_dataset
 
 
 @task
