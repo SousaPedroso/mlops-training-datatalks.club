@@ -1,4 +1,4 @@
-FROM python:3.10.11-slim
+FROM python:3.10.12-slim
 
 RUN pip install -U pip && pip install pipenv
 
