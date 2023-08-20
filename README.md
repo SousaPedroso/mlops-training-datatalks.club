@@ -1,5 +1,7 @@
 # MLOps for B2W dataset
 
+**Unfortunately I did not have enough time to complete this project within the cohort period. I will finish it later little by little to improve my knowledge in MLOps.**
+
 Repository for training MLOps for 2023 cohort from [DataTalks.club](https://github.com/DataTalksClub/mlops-zoomcamp). An end-to-end ML pipeline for NLP processing at [B2W dataset](https://huggingface.co/datasets/ruanchaves/b2w-reviews01).
 
 Table of sections:
